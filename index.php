@@ -33,7 +33,7 @@
     .car {
       width: 80px;
       height: 40px;
-      background: url('https://i.imgur.com/BiD1xbL.png') no-repeat center center / contain;
+      background: url('download.png') no-repeat center center / contain;
       position: absolute;
       top: 40px;
       z-index: 2;
