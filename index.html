@@ -6,47 +6,88 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: #f8f9fa;
+      background: #e9ecef;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
     }
+
+    .progress-container {
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      padding-top: 100px;
+    }
+
     .progress-track {
       position: relative;
-      height: 20px;
-      margin-top: 60px;
-      background: linear-gradient(to right, #dee2e6, #ced4da);
-      border-radius: 50px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      height: 60px;
+      background: #2f2f2f url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+      border-radius: 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transform: rotateX(10deg);
+      overflow: hidden;
     }
+
+    .track-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 6px;
+      width: 100%;
+      transform: translateY(-50%);
+      background: repeating-linear-gradient(
+        to right,
+        #fff,
+        #fff 20px,
+        transparent 20px,
+        transparent 40px
+      );
+      opacity: 0.6;
+      z-index: 0;
+    }
+
     .checkpoint {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       background-color: #6c757d;
+      border: 3px solid #fff;
       border-radius: 50%;
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
-      z-index: 1;
+      transform: translateY(-50%) translateZ(10px);
+      z-index: 2;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+
     .checkpoint.active {
       background-color: #198754;
-      box-shadow: 0 0 15px #198754;
+      box-shadow: 0 0 25px #198754, 0 6px 15px rgba(0,0,0,0.5);
     }
+
     .car {
       width: 80px;
       height: 40px;
-      background: url('download.png') no-repeat center center / contain;
+      background: url('https://cdn-icons-png.flaticon.com/512/744/744467.png') no-repeat center center / contain;
       position: absolute;
-      top: -8px;
-      z-index: 2;
+      top: -10px;
+      z-index: 3;
       cursor: grab;
+      transform: translateZ(20px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2 class="text-center mt-5">🚗 Project: Build Dashboard System</h2>
+<div class="container progress-container">
+  <h2 class="text-center mb-4">🚗 Project: Build Dashboard System</h2>
 
   <div class="progress-track mx-auto" id="track">
+    <div class="track-line"></div>
     <div id="car" class="car"></div>
   </div>
 </div>
@@ -68,7 +109,7 @@
   checkpoints.forEach((label, i) => {
     const dot = document.createElement('div');
     dot.className = 'checkpoint' + (i <= activeIndex ? ' active' : '');
-    dot.style.left = `calc(${(i / (total - 1)) * 100}% - 10px)`;
+    dot.style.left = `calc(${(i / (total - 1)) * 100}% - 12px)`;
     track.appendChild(dot);
   });
 
@@ -85,11 +126,7 @@
       maxX: (total - 1) * spacing - carWidth / 2
     },
     inertia: true,
-    onDrag() {
-      // Optional: glow on nearby checkpoints
-    },
     onRelease() {
-      // Snap to nearest checkpoint
       const nearest = Math.round(this.x / spacing);
       const finalX = nearest * spacing - carWidth / 2;
 
@@ -105,7 +142,6 @@
         }
       });
 
-      // Glow effect
       document.querySelectorAll('.checkpoint').forEach((cp, i) => {
         cp.classList.toggle('active', i <= nearest);
       });
